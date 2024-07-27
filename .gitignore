@@ -1,0 +1,16 @@
+__pycache__
+.vim*
+.idea
+.ipynb_checkpoints
+
+checkpoints
+data
+samples
+wordlists
+passgan
+pcfg
+
+*.sav
+log.txt
+
+train.py
