@@ -46,26 +46,26 @@ class DAE(TextModel):
         super().__init__(vocab, opt)
         self.drop = nn.Dropout(opt.dropout)
         self.enc = nn.LSTM(
-                input_size=opt.dim_emb,
-                hidden_size=opt.dim_h,
-                num_layers=opt.nlayers,
-                #dropout=opt.dropout if opt.nlayers > 1 else 0,
-                bidirectional=True
-            )
+            input_size=opt.dim_emb,
+            hidden_size=opt.dim_h,
+            num_layers=opt.nlayers,
+            #dropout=opt.dropout if opt.nlayers > 1 else 0,
+            bidirectional=True
+        )
         self.dec = nn.LSTM(
-                input_size=opt.dim_emb,
-                hidden_size=opt.dim_h,
-                num_layers=opt.nlayers,
-                #dropout=opt.dropout if opt.nlayers > 1 else 0
-            )
+            input_size=opt.dim_emb,
+            hidden_size=opt.dim_h,
+            num_layers=opt.nlayers,
+            #dropout=opt.dropout if opt.nlayers > 1 else 0
+        )
         self.mu = nn.Linear(2*opt.dim_h, opt.dim_z)
         self.logvar = nn.Linear(2*opt.dim_h, opt.dim_z)
         self.emb_z = nn.Linear(opt.dim_z, opt.dim_emb)
         self.optim = optim.Adam(
-                self.parameters(),
-                lr=opt.lr,
-                betas=(opt.b1, opt.b2)
-            )
+            self.parameters(),
+            lr=opt.lr,
+            betas=(opt.b1, opt.b2)
+        )
 
 
     def flatten(self):
@@ -111,29 +111,19 @@ class DAE(TextModel):
 
         #assert alg in ['greedy']
 
-        # inp: [1, batch_size] = [[bos, ..., bos]]
-        """
-        inp = torch.full(
-                size=(1, len(z)),
-                fill_value=self.vocab.bos_idx,
-                dtype=torch.long,
-                device=z.device
-            )
-        """
-
         passwds = torch.full(
-                size=(len(z), max_len + 1),
-                fill_value=self.vocab.pad_idx,
-                dtype=torch.long,
-                device=z.device
-            )
+            size=(len(z), max_len + 1),
+            fill_value=self.vocab.pad_idx,
+            dtype=torch.long,
+            device=z.device
+        )
 
         passwds[:,0] = torch.full(
-                size=(len(z),),
-                fill_value=self.vocab.bos_idx,
-                dtype=torch.long,
-                device=z.device
-            )
+            size=(len(z),),
+            fill_value=self.vocab.bos_idx,
+            dtype=torch.long,
+            device=z.device
+        )
 
         hid = None
 
@@ -143,21 +133,14 @@ class DAE(TextModel):
             # hid: [1, batch_size, hidden_size]
             logits, hid = self.decode(z, passwds[:,i].view(1, -1), hid)
 
-            #if alg == 'greedy':
-            # inp: [1, batch_size]
             passwds[:,i + 1] = logits.argmax(dim=-1)
 
         # [batch_size, max_len]
-        # return torch.cat(passwds).t()
         return passwds
 
 
     def forward(self, inp, is_train=False):
-        inp = noisy(
-                self.vocab,
-                inp,
-                *self.opt.noise
-            ) if is_train else inp
+        inp = noisy(self.vocab, inp, *self.opt.noise) if is_train else inp
 
         # mu: [batch_size, dim_z]
         # logvar: [batch_size, dim_z]
