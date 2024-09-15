@@ -49,14 +49,14 @@ class DAE(TextModel):
             input_size=opt.dim_emb,
             hidden_size=opt.dim_h,
             num_layers=opt.nlayers,
-            #dropout=opt.dropout if opt.nlayers > 1 else 0,
+            dropout=opt.dropout if opt.nlayers > 1 else 0,
             bidirectional=True
         )
         self.dec = nn.LSTM(
             input_size=opt.dim_emb,
             hidden_size=opt.dim_h,
             num_layers=opt.nlayers,
-            #dropout=opt.dropout if opt.nlayers > 1 else 0
+            dropout=opt.dropout if opt.nlayers > 1 else 0
         )
         self.mu = nn.Linear(2*opt.dim_h, opt.dim_z)
         self.logvar = nn.Linear(2*opt.dim_h, opt.dim_z)
