@@ -254,8 +254,8 @@ def main():
 
             'batch_size': 1000,
 
-            'load_model': 'pae/models/laae-0.01.pt',
-            'alphabet': 'pae/models/vocab.alphabet',
+            'load_model': 'out/old/models/laae-0.01.pt',
+            'alphabet': 'out/old/models/vocab.alphabet',
 
             'pii': 'wordlists/top1k',
 
