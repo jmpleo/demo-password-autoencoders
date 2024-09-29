@@ -16,3 +16,5 @@ log.txt
 train.py
 pii.txt
 out.tar
+
+.sync
